@@ -1,22 +1,36 @@
-import { Home, About, Projects, Contact } from '../pages';
+import Home from "../pages/Home";
+import About from '../pages/About'
+import Projects from "../pages/Projects";
+import Contact from "../pages/Contact";
 
-const routes = [
-  {
-    path: '/',
-    component: Home,
-  },
-  {
-    path: '/about',
-    component: About,
-  },
-  {
-    path: '/projects',
-    component: Projects,
-  },
-  {
-    path: '/contact',
-    component: Contact,
-  },
-];
+interface RouteType {
+    path: string,
+    component: () => JSX.Element,
+    name: string
+}
 
-export default routes;
+const routes: RouteType[] = [
+    {
+        path: '',
+        component: Home,
+        name: 'Home Screen',
+    },
+    {
+        path: '/About',
+        component: About,
+        name : 'About',
+    },
+    {
+        path: '/Projects',
+        component: Projects,
+        name: 'Projects',
+    },
+    {
+        path: '/Contact',
+        component: Contact,
+        name: 'Contact',
+    }
+
+]
+
+export default routes

@@ -1,55 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-interface Comment {
-  id: number;
-  content: string;
-}
-
-const Contact: React.FC = () => {
-  const [comment, setComment] = useState('');
-  const [comments, setComments] = useState<Comment[]>([]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (comment.trim() !== '') {
-      const newComment: Comment = {
-        id: Date.now(),
-        content: comment,
-      };
-      setComments([...comments, newComment]);
-      setComment('');
-    }
-  };
-
+function Contact() {
   return (
-    <div className="contact">
-      <h1>Contact</h1>
-      <section className="contact-form">
-        <h2>Leave a Comment or Suggestion</h2>
-        <form onSubmit={handleSubmit}>
-          <textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Enter your comment or suggestion"
-            required
-          ></textarea>
-          <button type="submit">Submit</button>
-        </form>
-      </section>
-      <section className="comments-section">
-        <h2>Comments and Suggestions</h2>
-        {comments.length === 0 ? (
-          <p>No comments yet.</p>
-        ) : (
-          <ul>
-            {comments.map((comment) => (
-              <li key={comment.id}>{comment.content}</li>
-            ))}
-          </ul>
-        )}
-      </section>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-4">Contact Me</h1>
+      <p className="text-xl mb-8">
+        Feel free to reach out to me via email at <a href="mailto:EJacobowitz515@gmail.com" className="text-blue-500 hover:underline">EJacobowitz515@gmail.com</a>
+      </p>
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold mb-4">Download My Resume</h2>
+        <a
+          href="https://drive.google.com/uc?export=download&id=1FF7scPnxXK8Po09HaNw6r_XxAS4wcL7d"
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+          download
+        >
+          Download Resume
+        </a>
+      </div>
     </div>
   );
-};
+}
 
 export default Contact;
