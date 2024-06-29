@@ -17,9 +17,9 @@ if (!API_KEY) {
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
-console.log('All environment variables:', import.meta.env);
-console.log('VITE_OPENAI_API_KEY:', import.meta.env.VITE_OPENAI_API_KEY);
-console.log('API_KEY variable:', API_KEY);
+// console.log('All environment variables:', import.meta.env);
+// console.log('VITE_OPENAI_API_KEY:', import.meta.env.VITE_OPENAI_API_KEY);
+// console.log('API_KEY variable:', API_KEY);
 
 const sendTextMessage = async (message: string) => {
   try {
