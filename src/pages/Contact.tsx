@@ -10,7 +10,7 @@ function Contact() {
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-4">Download My Resume</h2>
         <a
-          href="https://docs.google.com/document/d/1T38ODvwOWSbajBzZa5dC80HF3Giz14uLHvC4C921SGc/edit?usp=sharing"
+          href="https://drive.google.com/file/d/1FF7scPnxXK8Po09HaNw6r_XxAS4wcL7d/view?usp=drive_link"
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
           download
         >
