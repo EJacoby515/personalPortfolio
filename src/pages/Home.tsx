@@ -20,8 +20,8 @@ function Home() {
         <div className="bg-gray-800 p-4 rounded shadow-md">
           <h2 className="text-2xl font-bold">Certifications</h2>
           <ul className="list-disc list-inside">
-            <li>Coding Temple - Full Stack Development</li>
-            <li>Co.Lab - Software Developer</li>
+            <li><a href="https://www.credly.com/badges/6c634715-42c5-4744-a121-ae31f9c78760/public_url" target ="_blank">Coding Temple - Full Stack Development</a></li>
+            <li><a href="https://www.joincolab.io/certificate/eric-jacobowitz" target="_blank">Co.Lab - Software Developer</a></li>
           </ul>
         </div>
       </div>

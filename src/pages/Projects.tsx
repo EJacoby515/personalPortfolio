@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface Repo {
   id: number;
   name: string;
   html_url: string;
+  language: string;
 }
 
 function Projects() {
@@ -19,7 +20,27 @@ function Projects() {
         "https://api.github.com/users/EJacoby515/repos?sort=pushed&per_page=5"
       );
       const data = await response.json();
-      setRepos(data);
+
+      const repoLanguagesPromises = data.map(async (repo: any) => {
+        if (repo.name.toLowerCase() === 'personalportfolio') {
+          return null; // Skip this repo
+        }
+
+        const languagesResponse = await fetch(repo.languages_url);
+        const languages = await languagesResponse.json();
+        const primaryLanguage = languages ? Object.keys(languages)[0] : 'Unknown';
+
+        return {
+          id: repo.id,
+          name: repo.name,
+          html_url: repo.html_url,
+          language: primaryLanguage
+        };
+      });
+
+      const repositoriesWithLanguages = await Promise.all(repoLanguagesPromises);
+      const filteredRepositories = repositoriesWithLanguages.filter((repo) => repo !== null);
+      setRepos(filteredRepositories as Repo[]);
     } catch (error) {
       console.error("Error fetching repositories:", error);
     }
@@ -32,6 +53,7 @@ function Projects() {
         {repos.map((repo) => (
           <div key={repo.id} className="bg-gradient-to-l from-gray-800 to-gray-900 rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-bold mb-4">{repo.name}</h2>
+            <p className="text-gray-400 mb-4">Primary Language: {repo.language}</p>
             <div className="mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" className="w-full h-auto">
                 {/* Example colored lines */}
