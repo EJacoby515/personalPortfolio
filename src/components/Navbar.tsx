@@ -12,7 +12,7 @@ interface NavbarProps {
   showV2Link: boolean;
 }
 
-function Navbar({onV2Mentioned, showV2Link}: NavbarProps) {
+function Navbar({showV2Link}: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [recentRepos, setRecentRepos] = useState<Repo[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
