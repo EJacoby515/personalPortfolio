@@ -1,8 +1,12 @@
+// ChatbotPopup.tsx
 import React, { useState } from 'react'
 import Chatbot from './Chatbot'
 
+interface ChatbotPopupProps {
+  onV2Mentioned: () => void;
+}
 
-const ChatbotPopup: React.FC = () => {
+const ChatbotPopup: React.FC<ChatbotPopupProps> = ({ onV2Mentioned }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleChatbot = () => {
@@ -18,7 +22,7 @@ const ChatbotPopup: React.FC = () => {
       </button>
       {isOpen && (
         <div className={`chatbot-popup ${isOpen ? 'open' : ''}`}>
-          <Chatbot />
+          <Chatbot onV2Mentioned={onV2Mentioned} />
         </div>
       )}
     </div>

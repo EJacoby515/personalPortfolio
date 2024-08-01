@@ -7,7 +7,12 @@ interface Repo {
   html_url: string;
 }
 
-function Navbar() {
+interface NavbarProps {
+  onV2Mentioned: () => void;
+  showV2Link: boolean;
+}
+
+function Navbar({onV2Mentioned, showV2Link}: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [recentRepos, setRecentRepos] = useState<Repo[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -73,6 +78,14 @@ function Navbar() {
               >
                 Home
               </Link>
+              {showV2Link && (
+              <Link
+                to="/v2"
+                className="text-white hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                V2 Portfolio
+              </Link>
+              )}
               <Link
                 to="/about"
                 className="text-white hover:bg-indigo-500 px-3 py-2 rounded-md text-sm font-medium"

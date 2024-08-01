@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import {
   MainContainer,
@@ -16,10 +16,6 @@ if (!API_KEY) {
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
-
-// console.log('All environment variables:', import.meta.env);
-// console.log('VITE_OPENAI_API_KEY:', import.meta.env.VITE_OPENAI_API_KEY);
-// console.log('API_KEY variable:', API_KEY);
 
 const sendTextMessage = async (message: string) => {
   try {
@@ -47,19 +43,28 @@ type MessageModel = {
   position: 0 | 1 | 2 | 3 | 'single' | 'first' | 'normal' | 'last';
 };
 
-const Chatbot: React.FC = () => {
+interface ChatbotProps {
+  onV2Mentioned: () => void;
+}
+
+const Chatbot: React.FC<ChatbotProps> = ({ onV2Mentioned }) => {
   const [typing, setTyping] = useState(false);
   const [messages, setMessages] = useState<MessageModel[]>([
     {
-      message: 'What would you like to know about Eric?',
-      sentTime: 'just now',
-      sender: 'ChatGPT',
-      direction: 'incoming',
-      position: 'single',
+      message: "What would you like to know about Eric?",
+      sentTime: "just now",
+      sender: "ChatGPT",
+      direction: "incoming",
+      position: "single",
     },
   ]);
+  const [showPrompts, setShowPrompts] = useState(true);
 
   const handleSend = async (text: string) => {
+    if (text.toLowerCase().includes('v2')) {
+      onV2Mentioned();
+    }
+
     const newMessage: MessageModel = {
       message: text,
       sentTime: 'just now',
@@ -72,6 +77,11 @@ const Chatbot: React.FC = () => {
     setTyping(true);
 
     await processMessages(newMessages);
+  };
+
+  const handlePromptClick = (prompt: string) => {
+    handleSend(prompt);
+    setShowPrompts(false);
   };
 
   const processMessages = async (messages: MessageModel[], retryCount = 0) => {
@@ -117,8 +127,6 @@ const Chatbot: React.FC = () => {
       model: 'gpt-3.5-turbo-1106',
       messages: [systemMessage, ...resumeMessages, ...apiMessages],
     };
-
-    console.log('API request body:', apiRequestBody);
 
     try {
       const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -192,6 +200,38 @@ const Chatbot: React.FC = () => {
 
   return (
     <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+      {showPrompts && (
+        <div style={{
+          position: 'absolute',
+          top: -120,
+          left: 0,
+          right: 0,
+          background: '#2a2a2a',
+          padding: '10px',
+          borderRadius: '10px 10px 0 0',
+          zIndex: 1000,
+        }}>
+          <p style={{ color: '#ffffff', marginBottom: '10px' }}>Try asking about:</p>
+          <button 
+            onClick={() => handlePromptClick("Can you tell me about Eric's resume?")}
+            style={{ margin: '0 5px 5px 0', padding: '5px 10px', background: '#3c6e71', color: '#ffffff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+          >
+            Eric's resume
+          </button>
+          <button 
+            onClick={() => handlePromptClick("Is Eric currently available for hire?")}
+            style={{ margin: '0 5px 5px 0', padding: '5px 10px', background: '#3c6e71', color: '#ffffff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+          >
+            Availability for hire
+          </button>
+          <button 
+            onClick={() => handlePromptClick("Is there a V2 of this portfolio?")}
+            style={{ margin: '0 5px 5px 0', padding: '5px 10px', background: '#3c6e71', color: '#ffffff', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+          >
+            V2 Portfolio? (Easter egg)
+          </button>
+        </div>
+      )}
       <MainContainer style={{
         backgroundColor: '#1a1a1a',
         border: 'none',
