@@ -286,7 +286,7 @@ export default function V2Index() {
 
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = `https://docs.google.com/document/d/1T38ODvwOWSbajBzZa5dC80HF3Giz14uLHvC4C921SGc/export?format=pdf`;
+    link.href = '/resume.pdf';
     link.download = 'Eric_Jacobowitz_Resume.pdf';
     document.body.appendChild(link);
     link.click();
