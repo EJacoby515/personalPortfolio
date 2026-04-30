@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView, AnimatePresence, type Variants } from 'framer-motion';
 import './v2styles.css';
 import V2Chatbot from './V2Chatbot';
 
@@ -109,14 +109,16 @@ interface Repo {
 
 // ── Animation variants ───────────────────────────────────────
 
-const fadeUp = {
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+
+const fadeUp: Variants = {
   hidden: { opacity: 0, y: 48 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: EASE } },
 };
 
-const fadeLeft = {
+const fadeLeft: Variants = {
   hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: EASE } },
 };
 
 const stagger = {
@@ -286,7 +288,7 @@ export default function V2Index() {
 
   const handleDownload = () => {
     const link = document.createElement('a');
-    link.href = `https://docs.google.com/document/d/1T38ODvwOWSbajBzZa5dC80HF3Giz14uLHvC4C921SGc/export?format=pdf`;
+    link.href = '/resume.pdf';
     link.download = 'Eric_Jacobowitz_Resume.pdf';
     document.body.appendChild(link);
     link.click();
@@ -578,7 +580,7 @@ export default function V2Index() {
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
-              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.6, ease: EASE }}
             >
               <V2Chatbot />
             </motion.div>

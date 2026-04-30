@@ -22,6 +22,14 @@ const MODELS = [
   'minimax/minimax-m2.5:free',
 ];
 
+const MODEL_LABELS: Record<string, string> = {
+  'meta-llama/llama-3.3-70b-instruct:free': 'Llama 3.3 · 70B',
+  'google/gemma-4-31b-it:free': 'Gemma 4 · 31B',
+  'minimax/minimax-m2.5:free': 'MiniMax M2.5',
+};
+
+const DEFAULT_MODEL_LABEL = MODEL_LABELS[MODELS[0]];
+
 const SYSTEM_PROMPT = `You are an AI assistant embedded in Eric Jacobowitz's portfolio website. Your ONLY purpose is to answer questions about Eric Jacobowitz as a person and as a potential hire.
 
 If asked anything unrelated to Eric, say: "I'm Eric's portfolio AI — I'm only here to talk about him! Ask me about his experience, skills, or what he's like to work with."
@@ -108,6 +116,7 @@ export default function V2Chatbot() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPrompts, setShowPrompts] = useState(true);
+  const [modelLabel, setModelLabel] = useState(DEFAULT_MODEL_LABEL);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -139,6 +148,7 @@ export default function V2Chatbot() {
       let reply: string | null = null;
 
       for (const model of MODELS) {
+        setModelLabel(MODEL_LABELS[model]);
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 12000);
 
@@ -169,11 +179,14 @@ export default function V2Chatbot() {
         }
       }
 
+      if (!reply) setModelLabel(DEFAULT_MODEL_LABEL);
+
       setMessages(prev => [
         ...prev,
         { role: 'assistant', content: reply ?? "I'm having trouble connecting right now. Try again in a moment!" },
       ]);
     } catch {
+      setModelLabel(DEFAULT_MODEL_LABEL);
       setMessages(prev => [
         ...prev,
         { role: 'assistant', content: "Hmm, something went wrong on my end. Give it another shot!" },
@@ -194,9 +207,20 @@ export default function V2Chatbot() {
     <div className="chatbot-wrap">
       {/* Header */}
       <div className="chatbot-head">
-        <div className="chatbot-status-dot" />
+        <div className={`chatbot-status-dot${loading ? ' chatbot-status-dot--thinking' : ''}`} />
         <span className="chatbot-head-title">Ask Eric's AI</span>
-        <span className="chatbot-head-sub">Llama 3.3 · 70B</span>
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={loading ? `${modelLabel}-thinking` : modelLabel}
+            className="chatbot-head-sub"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.18 }}
+          >
+            {loading ? `${modelLabel} · thinking…` : modelLabel}
+          </motion.span>
+        </AnimatePresence>
       </div>
 
       {/* Quick prompts */}

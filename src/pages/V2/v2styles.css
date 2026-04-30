@@ -675,6 +675,17 @@ body, html {
   50%       { opacity: 0.5; box-shadow: 0 0 2px var(--sage); }
 }
 
+.chatbot-status-dot--thinking {
+  background: var(--gold);
+  box-shadow: 0 0 8px var(--gold);
+  animation: breathe-fast 0.8s ease-in-out infinite;
+}
+
+@keyframes breathe-fast {
+  0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--gold); }
+  50%       { opacity: 0.4; box-shadow: 0 0 3px var(--gold); }
+}
+
 .chatbot-head-title {
   font-family: var(--font-display);
   font-size: 0.875rem;
