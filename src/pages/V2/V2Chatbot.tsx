@@ -17,12 +17,14 @@ const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
 
 // Ordered fallback list — non-reasoning models only, first available wins
 const MODELS = [
+  'meta-llama/llama-3.2-3b-instruct',
   'meta-llama/llama-3.3-70b-instruct:free',
   'google/gemma-4-31b-it:free',
   'minimax/minimax-m2.5:free',
 ];
 
 const MODEL_LABELS: Record<string, string> = {
+  'meta-llama/llama-3.2-3b-instruct': 'Llama 3.2 · 3B',
   'meta-llama/llama-3.3-70b-instruct:free': 'Llama 3.3 · 70B',
   'google/gemma-4-31b-it:free': 'Gemma 4 · 31B',
   'minimax/minimax-m2.5:free': 'MiniMax M2.5',
