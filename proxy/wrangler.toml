@@ -1,0 +1,10 @@
+name = "ejacoby-chat-proxy"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+# The OpenRouter key is NOT stored here. Set it as an encrypted secret:
+#   wrangler secret put OPENROUTER_KEY
+#
+# For local dev (`wrangler dev`), put it in proxy/.dev.vars instead:
+#   OPENROUTER_KEY=sk-or-v1-...
+# (.dev.vars is gitignored — never commit it.)

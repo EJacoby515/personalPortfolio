@@ -13,16 +13,12 @@ function renderMarkdown(text: string) {
   });
 }
 
-const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY;
+// Chat goes through a serverless proxy that holds the OpenRouter key
+// server-side. The key is NEVER shipped to the browser. See /proxy.
+const PROXY_URL = import.meta.env.VITE_CHAT_PROXY_URL;
 
-// Ordered fallback list — non-reasoning models only, first available wins
-const MODELS = [
-  'meta-llama/llama-3.2-3b-instruct',
-  'meta-llama/llama-3.3-70b-instruct:free',
-  'google/gemma-4-31b-it:free',
-  'minimax/minimax-m2.5:free',
-];
-
+// Labels for the model badge. The proxy decides which model actually runs and
+// returns its id; we map that id to a friendly label here.
 const MODEL_LABELS: Record<string, string> = {
   'meta-llama/llama-3.2-3b-instruct': 'Llama 3.2 · 3B',
   'meta-llama/llama-3.3-70b-instruct:free': 'Llama 3.3 · 70B',
@@ -30,71 +26,11 @@ const MODEL_LABELS: Record<string, string> = {
   'minimax/minimax-m2.5:free': 'MiniMax M2.5',
 };
 
-const DEFAULT_MODEL_LABEL = MODEL_LABELS[MODELS[0]];
+const DEFAULT_MODEL_LABEL = MODEL_LABELS['meta-llama/llama-3.2-3b-instruct'];
 
-const SYSTEM_PROMPT = `You are an AI assistant embedded in Eric Jacobowitz's portfolio website. Your ONLY purpose is to answer questions about Eric Jacobowitz as a person and as a potential hire.
-
-If asked anything unrelated to Eric, say: "I'm Eric's portfolio AI — I'm only here to talk about him! Ask me about his experience, skills, or what he's like to work with."
-
-ERIC JACOBOWITZ — Software Engineer | Full Stack Developer
-Location: Miami, FL
-Email: EJacoby.dev@gmail.com
-GitHub: github.com/EJacoby515
-LinkedIn: linkedin.com/in/eric-jacobowitz
-
-CURRENT ROLE: Software Engineer Lead at PushFi (September 2025 – present)
-• Leading technical development of an Uber-style lending platform MVP targeting 30-day launch
-• Architecting React/Node.js/PostgreSQL stack with automated lender-matching engine and third-party KYC integrations
-• Implementing borrower onboarding wizard and agent dashboard supporting a 50-50 revenue split model
-• Driving daily stand-ups and maintaining sprint velocity — targeting 1,000 agent acquisition within 90 days
-• Building toward a $50M first-year funding target
-
-EXPERIENCE:
-• Software Engineer I | Helios Technologies (02/2025 – 09/2025)
-  - Joined an AI companion startup to improve UI and implement more efficient LLM integration
-  - Modernized codebase with TypeScript, React, and Vite; improved UI/UX and user engagement
-  - Migrated environment config from client-side to server-side for easier updates
-  - Implemented and maintained RESTful APIs for seamless front/back-end integration
-
-• Software Engineer Intern | CodeAlpha (09/2024 – 04/2025)
-  - Built cross-platform mobile apps with React Native, focusing on component architecture and state management
-  - Applied learnings to independently build HeadStrong, a mental health app with privacy-first architecture
-
-• Software Engineer Intern | Resonate (09/2023 – 12/2024)
-  - Built full-stack chat system using React Native and PocketBase, cutting database queries by 40%
-  - Enhanced database performance by 30% through lifecycle management of data statuses
-  - Refactored TypeScript navigation architecture, reducing related bugs by 25%
-
-• Software Engineer Intern | OpenQQuantify (07/2023 – 02/2024)
-  - Developed front-end components using JavaScript and modern frameworks
-  - Collaborated with cross-functional teams to implement and optimize quantum algorithms
-
-TECHNICAL SKILLS:
-React, TypeScript, JavaScript, HTML, CSS, WordPress, AWS (EC2, RDS), Python, Flask, RESTful APIs, Firebase, PostgreSQL, Git/Version Control, Database Design, CI/CD, Unit Testing, Agile (Scrum), React Native, Node.js, Expo, PocketBase, LLM integration
-
-PROJECTS:
-• HeadStrong — Men's mental health app (React Native/Expo/TypeScript/Firebase)
-  - Identified gap in mental health resources tailored for men
-  - Implemented mood tracking, activity streaks, peer communities, data visualization (React Native Chart Kit)
-  - Privacy-first architecture for sensitive user data
-
-• AI-Powered Resume Chatbot — Personal portfolio (React/TypeScript/OpenAI API)
-  - Created interactive chatbot to present professional info to potential employers
-  - Error handling and retry mechanisms
-
-EDUCATION:
-Bachelor of Science in Computer Science | FIU (Florida International University) | 2022
-
-INTERESTS: AI/ML, Security Engineering, Web Development, UI/UX Design, API Integration, Scalability Challenges, WordPress, Continuous Learning
-
-BACKGROUND & CHARACTER:
-Eric is a former Firefighter/Paramedic (Broward Sheriff's Office, Ft. Myers Beach Fire Control District) and ER Paramedic at Broward Health Medical Center. This unconventional path into tech gives him extraordinary strengths: calm under pressure, rapid high-stakes decision making, deep team leadership, and an unwavering commitment to reliability. He transitioned into software engineering and in roughly 2 years went from intern to tech lead.
-
-He has a track record of measurable impact: 40% DB query reduction at Resonate, 30% DB performance improvement, 25% TypeScript bug reduction. He's worked at an AI companion startup (Helios Technologies), meaning he understands LLM integration in production.
-
-Eric is collaborative, self-driven, and brings the kind of composure most engineers only develop after years in the field.
-
-Answer warmly, confidently, and directly. If genuinely unsure of a specific detail, say so rather than guessing. Keep answers focused and professional.`;
+// NOTE: the system prompt (Eric's resume/context) now lives server-side in the
+// proxy Worker (proxy/src/index.js). It must NOT be sent from the client — a
+// caller could otherwise override it. The client only sends the conversation.
 
 const QUICK_PROMPTS = [
   "What's Eric's current role?",
@@ -138,50 +74,38 @@ export default function V2Chatbot() {
     setLoading(true);
 
     try {
-      const body = {
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          ...next.map(m => ({ role: m.role, content: m.content })),
-        ],
-        temperature: 0.7,
-        max_tokens: 512,
-      };
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 20000);
 
       let reply: string | null = null;
+      try {
+        // The proxy handles the system prompt, model fallback, and the API key.
+        // We only send the conversation turns.
+        const res = await fetch(PROXY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages: next.map(m => ({ role: m.role, content: m.content })),
+          }),
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
 
-      for (const model of MODELS) {
-        setModelLabel(MODEL_LABELS[model]);
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 12000);
-
-        try {
-          const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${API_KEY}`,
-              'Content-Type': 'application/json',
-              'HTTP-Referer': 'https://ejacoby.dev',
-              'X-Title': 'Eric Jacobowitz Portfolio',
-            },
-            body: JSON.stringify({ ...body, model }),
-            signal: controller.signal,
-          });
-
-          clearTimeout(timeout);
-
-          if (res.status === 429) continue;
-          if (!res.ok) break;
-
+        if (res.ok) {
           const data = await res.json();
-          reply = data.choices?.[0]?.message?.content ?? null;
-          if (reply) break;
-        } catch {
-          clearTimeout(timeout);
-          continue; // timed out or network error — try next
+          reply = data?.reply ?? null;
+          setModelLabel(
+            data?.model && MODEL_LABELS[data.model]
+              ? MODEL_LABELS[data.model]
+              : DEFAULT_MODEL_LABEL
+          );
+        } else {
+          setModelLabel(DEFAULT_MODEL_LABEL);
         }
+      } catch {
+        clearTimeout(timeout);
+        setModelLabel(DEFAULT_MODEL_LABEL);
       }
-
-      if (!reply) setModelLabel(DEFAULT_MODEL_LABEL);
 
       setMessages(prev => [
         ...prev,
