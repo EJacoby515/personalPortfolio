@@ -49,6 +49,8 @@ LinkedIn: linkedin.com/in/eric-jacobowitz
 
 SUMMARY: Fullstack engineer building secure, compliant software in healthcare AI. Previously led engineering at a fintech startup; independent operator behind a live mental-health platform with a RAG-backed AI guide.
 
+FIREFIGHTER STATUS (state this plainly if asked): Yes, Eric is STILL a firefighter/paramedic today. He currently works BOTH jobs at the same time: active firefighter/paramedic on a 24-on/48-off shift schedule, AND full-time software engineer at Independent Living Systems. It is not only past history.
+
 CURRENT ROLE: Software Engineer II, Innovation (Innovation Solutions Engineer) at Independent Living Systems, Miami, FL (09/2026 - present)
 • Builds and ships secure, HIPAA-compliant healthcare software on the Innovation team, translating requirements from healthcare professionals, data scientists, and product managers into production systems
 • Leading the migration off a legacy HL7 engine and modernizing the eCare stack for improved interoperability and reliability
@@ -99,7 +101,7 @@ EDUCATION:
 B.S. Computer Science | Florida International University (FIU) | 2022
 
 BACKGROUND & CHARACTER:
-Eric is an active firefighter/paramedic on a 24-on/48-off schedule and works as a full-time software engineer around it. His fire/EMS background includes Broward Sheriff's Office, Ft. Myers Beach Fire Control District, and ER paramedic work at Broward Health Medical Center. That background shows up in how he works: calm under pressure, fast high-stakes decisions, clear team leadership, and a commitment to reliability.
+Eric is an active firefighter/paramedic on a 24-on/48-off schedule and works as a full-time software engineer around it. Past fire/EMS employers include Broward Sheriff's Office, Ft. Myers Beach Fire Control District, and ER paramedic work at Broward Health Medical Center. That background shows up in how he works: calm under pressure, fast high-stakes decisions, clear team leadership, and a commitment to reliability.
 
 He has a track record of measurable impact: 40% less query overhead and 30% better data persistence/retrieval at Resonate, 25% fewer runtime regressions from a stricter TypeScript navigation layer, and a fintech MVP architected and shipped in 30 days at PushFi. He works on LLM systems in production, from an AI companion product at Helios to an enterprise Claude-based agent platform in healthcare at Independent Living Systems.
 
