@@ -196,12 +196,12 @@ function GeoHex() {
         />
       ))}
       {/* Diagonal accent lines */}
-      <motion.line x1="10" y1="140" x2="510" y2="380" stroke="#c4a267" strokeWidth="0.4"
+      <motion.line x1="10" y1="140" x2="510" y2="380" stroke="#ff7a2f" strokeWidth="0.4"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 0.4 }}
         transition={{ duration: 2, delay: 1.8 }}
       />
-      <motion.line x1="510" y1="140" x2="10" y2="380" stroke="#c4a267" strokeWidth="0.4"
+      <motion.line x1="510" y1="140" x2="10" y2="380" stroke="#ff7a2f" strokeWidth="0.4"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: 0.4 }}
         transition={{ duration: 2, delay: 2.1 }}
@@ -324,6 +324,7 @@ export default function V2Index() {
       ════════════════════════════════════════════════ */}
       <section id="home" className="v2-section" style={{ padding: 0 }}>
         <div className="geo-grid" />
+        <div className="hero-glow" />
         <div style={{ padding: '0 56px', display: 'flex', alignItems: 'center', minHeight: '100vh', position: 'relative' }}>
           <div className="hero-inner">
             <motion.div
