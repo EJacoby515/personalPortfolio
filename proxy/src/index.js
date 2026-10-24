@@ -14,6 +14,8 @@
 //   - Hard caps on tokens, message count, and input size.
 
 const ALLOWED_ORIGINS = [
+  'https://ejcodes.com',
+  'https://www.ejcodes.com',
   'https://ejacoby.dev',
   'https://www.ejacoby.dev',
   'http://localhost:5173',
