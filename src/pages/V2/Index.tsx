@@ -16,88 +16,102 @@ import V2Chatbot from './V2Chatbot';
 
 // ── Data ────────────────────────────────────────────────────
 
+// Keep in sync with public/resume.pdf and the chat proxy prompt (proxy/src/index.js)
 const EXPERIENCE = [
   {
-    role: 'Software Engineer Lead',
-    company: 'PushFi',
-    dates: 'Sep 2025 — Present',
+    role: 'Software Engineer II, Innovation',
+    company: 'Independent Living Systems',
+    dates: 'Sep 2026 - Present',
     current: true,
     bullets: [
-      'Leading technical development of Uber-style lending platform MVP targeting 30-day launch',
-      'Architecting React / Node.js / PostgreSQL stack with automated lender-matching engine and KYC integrations',
-      'Driving daily stand-ups and sprint velocity — targeting 1,000 agent acquisition within 90 days',
-      'Building borrower onboarding and agent dashboards to support $50M first-year funding target',
+      'Build and ship secure, HIPAA-compliant healthcare software on the Innovation team, translating requirements from healthcare professionals, data scientists, and product managers into production systems',
+      'Leading the migration off a legacy HL7 engine and modernizing the eCare stack for improved interoperability and reliability',
+      'Contributing to an internal, enterprise AI platform built on in-house Claude-based agents, with human-in-the-loop design to keep PHI protected and compliant',
+      'Own a Postgres + JSONB settings architecture from design through implementation',
+    ],
+  },
+  {
+    role: 'Lead Software Engineer',
+    company: 'PushFi',
+    dates: 'Oct 2025 - Sep 2026',
+    current: false,
+    bullets: [
+      'Worked directly with two non-technical founders translating business logic into system architecture; owned deployment decisions and engineering direction',
+      'Architected and shipped MVP in 30 days: lender-matching engine, KYC integrations, borrower onboarding, and agent admin tooling on React, Node, and PostgreSQL',
+      'Scrapped inherited NextAuth and rebuilt authentication on Auth0 to meet compliance requirements in the fintech regulatory environment',
+      'Ran engineering standups Mon/Wed/Fri and the Monday leadership debrief; held hiring authority for the engineering team',
+      'Mentored junior developers with file-level blueprints and code snippets, getting them shipping production code on the lending platform',
     ],
   },
   {
     role: 'Software Engineer I',
     company: 'Helios Technologies',
-    dates: 'Feb 2025 — Sep 2025',
+    dates: 'Aug 2024 - Sep 2025',
     current: false,
     bullets: [
-      'Joined AI companion startup to improve UI and implement more efficient LLM integration',
-      'Developed reusable components with TypeScript, React, and Vite — improving UI/UX and engagement',
-      'Migrated environment config from client-side to server-side for streamlined updates',
-      'Implemented and maintained RESTful APIs for seamless front/back-end integration',
+      'Restructured prompts and context-window handling for an AI companion product, cutting latency and tightening response accuracy',
+      'Hardened retry and error handling around LLM calls so flaky model responses stopped breaking conversations',
+      'Built a reusable TypeScript component library with Vite that sped up every feature ship that followed',
+      'Moved environment config from client to server, enabling fixes without shipping a new build',
+      'Built and maintained REST APIs; partnered with design and product to turn rough requirements into UIs that converted',
     ],
   },
   {
     role: 'Software Engineer Intern',
     company: 'CodeAlpha',
-    dates: 'Sep 2024 — Apr 2025',
+    dates: 'Jul 2023 - Jul 2024',
     current: false,
     bullets: [
-      'Built cross-platform mobile apps with React Native, focusing on component architecture and state management',
-      'Independently built HeadStrong — a mental health app with privacy-first architecture for sensitive user data',
+      'Built cross-platform mobile apps in React Native with modular components and clean state management',
+      'Tuned mobile UI/UX for varied screen sizes and device constraints, lifting engagement',
     ],
   },
   {
     role: 'Software Engineer Intern',
     company: 'Resonate',
-    dates: 'Sep 2023 — Dec 2024',
+    dates: 'Jan 2023 - Jun 2023',
     current: false,
     bullets: [
-      'Built full-stack chat system using React Native and PocketBase, cutting database queries by 40%',
-      'Enhanced database performance by 30% through lifecycle management of data statuses',
-      'Refactored TypeScript navigation architecture with enhanced type safety, reducing bugs by 25%',
+      'Built a real-time chat system in React Native and PocketBase, cutting query overhead 40%',
+      'Improved data persistence and retrieval 30% with a tighter status-lifecycle model',
+      'Rewrote the TypeScript navigation layer with stricter types, dropping runtime regressions 25%',
     ],
   },
   {
     role: 'Software Engineer Intern',
     company: 'OpenQQuantify',
-    dates: 'Jul 2023 — Feb 2024',
+    dates: 'Jun 2022 - Dec 2022',
     current: false,
     bullets: [
-      'Developed front-end components using JavaScript and modern frameworks',
-      'Collaborated with cross-functional teams to implement and optimize quantum algorithms',
+      'Built frontend components in modern JS frameworks to visualize quantum datasets; collaborated with researchers to implement quantum algorithms',
     ],
   },
 ];
 
 const SKILLS = [
   {
-    label: 'Frontend',
-    tags: ['React', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'React Native', 'Vite', 'Expo'],
+    label: 'Languages & Frontend',
+    tags: ['TypeScript', 'JavaScript (ES6+)', 'Python', 'React', 'React Native', 'Next.js', 'Vite', 'HTML5', 'CSS3'],
   },
   {
-    label: 'Backend & Cloud',
-    tags: ['Node.js', 'Python', 'Flask', 'PostgreSQL', 'Firebase', 'AWS EC2', 'AWS RDS', 'PocketBase'],
+    label: 'Backend & Data',
+    tags: ['Node.js', 'Express', 'Flask', 'PostgreSQL', 'MySQL', 'Firebase', 'REST APIs'],
   },
   {
-    label: 'AI & APIs',
-    tags: ['LLM Integration', 'OpenAI API', 'OpenRouter', 'RESTful APIs', 'AI Companion Systems'],
+    label: 'Cloud & Infra',
+    tags: ['AWS (EC2, RDS)', 'Auth0', 'CI/CD', 'Git', 'Unit Testing'],
   },
   {
-    label: 'Tooling',
-    tags: ['Git', 'CI/CD', 'Agile / Scrum', 'Unit Testing', 'Database Design', 'WordPress'],
+    label: 'AI',
+    tags: ['LLM APIs', 'RAG', 'Prompt Engineering', 'AI-Assisted Development Workflows'],
   },
 ];
 
 const FEATURED_PROJECTS = [
   {
-    tag: 'Mobile App',
+    tag: 'Founder & Engineer',
     name: 'HeadStrong',
-    desc: 'Mental health app for men built with React Native, Expo, TypeScript, and Firebase. Mood tracking, activity streaks, peer communities, and privacy-first data architecture.',
+    desc: 'Mental health platform for men with live users. React Native, Expo, and TypeScript on Firebase with real-time sync for mood tracking, activity streaks, and secure peer communities. Shipping a RAG-backed LLM companion for context-aware journaling and check-ins.',
     lang: 'TypeScript',
     url: 'https://github.com/EJacoby515',
   },
@@ -436,7 +450,7 @@ export default function V2Index() {
 
               {/* Title */}
               <motion.p className="hero-title" variants={fadeUp}>
-                Software Engineer &amp; <span className="hero-title-highlight">AI Integrations</span>
+                Full-Stack Software Engineer · <span className="hero-title-highlight">AI &amp; Healthtech</span>
               </motion.p>
 
               {/* Meta */}
@@ -507,11 +521,12 @@ export default function V2Index() {
             {/* Left: Bio + Skills */}
             <RevealSection>
               <motion.p className="exp-bio" variants={fadeUp}>
-                Former <span className="exp-bio-highlight">Firefighter/Paramedic</span> turned software engineer.
-                That path isn't a detour — it's the reason I operate well under pressure, lead clearly in ambiguity,
-                and ship things that actually work. In two years I went from intern to{' '}
-                <span className="exp-bio-highlight">tech lead</span>, with stops at an AI companion startup and a
-                fintech MVP with a $50M funding target.
+                Active <span className="exp-bio-highlight">firefighter/paramedic</span> on a 24-on/48-off schedule,
+                and a full-time engineer around it. The fire service is why I stay calm under pressure, lead clearly
+                when things are ambiguous, and ship software that actually works. Today I build HIPAA-compliant
+                healthcare software on the Innovation team at{' '}
+                <span className="exp-bio-highlight">Independent Living Systems</span>, after leading engineering at a
+                fintech startup and hardening LLM integrations at an AI companion company.
               </motion.p>
 
               <motion.div className="skill-groups" variants={staggerFast}>
@@ -622,7 +637,7 @@ export default function V2Index() {
             <RevealSection>
               <motion.p className="contact-intro" variants={fadeUp}>
                 Open to full-time roles, contract work, and interesting problems.
-                Whether you want to talk shop, ask about my background, or just say hi —
+                Whether you want to talk shop, ask about my background, or just say hi,
                 reach out.
               </motion.p>
 
@@ -666,7 +681,7 @@ export default function V2Index() {
 
       {/* ── Footer ── */}
       <footer className="v2-footer">
-        <span>© 2025 Eric Jacobowitz</span>
+        <span>© {new Date().getFullYear()} Eric Jacobowitz</span>
         <div className="footer-links">
           <a href="https://github.com/EJacoby515" target="_blank" rel="noopener noreferrer">GitHub</a>
           <a href="https://linkedin.com/in/eric-jacobowitz" target="_blank" rel="noopener noreferrer">LinkedIn</a>
