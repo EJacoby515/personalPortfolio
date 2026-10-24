@@ -45,6 +45,20 @@ body, html {
 
 ::selection { background: var(--orange); color: var(--bg); }
 
+/* ── Scroll progress ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--orange), var(--orange-light));
+  box-shadow: 0 0 12px var(--orange);
+  transform-origin: 0 50%;
+  z-index: 200;
+  pointer-events: none;
+}
+
 /* ── Container ── */
 .v2-container {
   height: 100vh;
@@ -176,13 +190,20 @@ body, html {
   margin-bottom: 1rem;
 }
 
-.section-label::before {
-  content: '';
+.section-index {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+}
+
+.section-label-line {
   display: block;
   width: 2.5rem;
   height: 1px;
   background: var(--orange);
   flex-shrink: 0;
+  transform-origin: left center;
 }
 
 .section-title {
@@ -194,6 +215,17 @@ body, html {
   line-height: 1.1;
   margin-bottom: 3.5rem;
 }
+
+/* Masked line reveal: the inner span slides up from behind this edge */
+.reveal-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.reveal-mask > span { display: inline-block; }
+
+.title-dot { color: var(--orange); }
 
 /* ── Hero ── */
 #home {
@@ -323,11 +355,11 @@ body, html {
 }
 
 /* ── Geometric SVG accent ── */
+/* Centered with calc rather than translate so Framer can own `transform` */
 .hero-geo {
   position: absolute;
   right: -80px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: calc(50% - 260px);
   width: 520px;
   height: 520px;
   opacity: 0.06;
@@ -449,6 +481,18 @@ body, html {
   bottom: 0;
   width: 1px;
   background: linear-gradient(to bottom, transparent, var(--sage-dim) 8%, var(--sage-dim) 92%, transparent);
+}
+
+/* Orange fill that tracks scroll progress through the timeline */
+.timeline-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--orange-light), var(--orange));
+  box-shadow: 0 0 8px var(--orange);
+  transform-origin: top center;
 }
 
 .timeline-entry {

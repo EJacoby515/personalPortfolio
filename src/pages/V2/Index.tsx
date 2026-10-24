@@ -1,5 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, useInView, AnimatePresence, type Variants } from 'framer-motion';
+import { useState, useEffect, useRef, type RefObject } from 'react';
+import {
+  motion,
+  useInView,
+  useScroll,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+  AnimatePresence,
+  MotionConfig,
+  type MotionValue,
+  type Variants,
+} from 'framer-motion';
 import './v2styles.css';
 import V2Chatbot from './V2Chatbot';
 
@@ -121,6 +132,26 @@ const fadeLeft: Variants = {
   visible: { opacity: 1, x: 0, transition: { duration: 0.55, ease: EASE } },
 };
 
+const fadeIn: Variants = {
+  hidden: { opacity: 0, x: -8 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: EASE } },
+};
+
+const lineDraw: Variants = {
+  hidden: { scaleX: 0 },
+  visible: { scaleX: 1, transition: { duration: 0.7, ease: EASE } },
+};
+
+const maskUp: Variants = {
+  hidden: { y: '110%' },
+  visible: { y: '0%', transition: { duration: 0.8, ease: EASE } },
+};
+
+const cardRise: Variants = {
+  hidden: { opacity: 0, y: 40, scale: 0.97 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.6, ease: EASE } },
+};
+
 const stagger = {
   visible: { transition: { staggerChildren: 0.1 } },
 };
@@ -144,6 +175,25 @@ function RevealSection({ children, className = '' }: { children: React.ReactNode
     >
       {children}
     </motion.div>
+  );
+}
+
+function SectionHeading({ index, label, title }: { index: string; label: string; title: string }) {
+  return (
+    <RevealSection>
+      <div className="section-label">
+        <motion.span className="section-index" variants={fadeIn}>{index}</motion.span>
+        <motion.span className="section-label-line" variants={lineDraw} />
+        <motion.span variants={fadeIn}>{label}</motion.span>
+      </div>
+      <h2 className="section-title">
+        <span className="reveal-mask">
+          <motion.span variants={maskUp}>
+            {title}<span className="title-dot">.</span>
+          </motion.span>
+        </span>
+      </h2>
+    </RevealSection>
   );
 }
 
@@ -180,10 +230,34 @@ function TimelineEntry({ entry, index }: { entry: TimelineEntryData; index: numb
   );
 }
 
-// Geometric hex wireframe for hero
-function GeoHex() {
+// Rail fills orange as the visitor scrolls through the roles
+function Timeline({ containerRef }: { containerRef: RefObject<HTMLDivElement> }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    container: containerRef,
+    target: ref,
+    offset: ['start 80%', 'end 55%'],
+  });
+  const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 30, restDelta: 0.001 });
+
   return (
-    <svg className="hero-geo" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div className="timeline" ref={ref}>
+      <div className="timeline-rail" />
+      <motion.div className="timeline-progress" style={{ scaleY: fill }} />
+      {EXPERIENCE.map((entry, i) => (
+        <TimelineEntry key={i} entry={entry} index={i} />
+      ))}
+    </div>
+  );
+}
+
+// Geometric hex wireframe for hero; rotates and lifts as the hero scrolls away
+function GeoHex({ progress }: { progress: MotionValue<number> }) {
+  const reduceMotion = useReducedMotion();
+  const rotate = useTransform(progress, [0, 1], [0, reduceMotion ? 0 : 30]);
+  const y = useTransform(progress, [0, 1], [0, reduceMotion ? 0 : -90]);
+  return (
+    <motion.svg className="hero-geo" style={{ rotate, y }} viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
       {[0, 40, 80, 120, 160].map((inset, i) => (
         <motion.polygon
           key={i}
@@ -206,7 +280,7 @@ function GeoHex() {
         animate={{ pathLength: 1, opacity: 0.4 }}
         transition={{ duration: 2, delay: 2.1 }}
       />
-    </svg>
+    </motion.svg>
   );
 }
 
@@ -217,6 +291,19 @@ export default function V2Index() {
   const [scrolled, setScrolled] = useState(false);
   const [repos, setRepos] = useState<Repo[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+
+  const { scrollYProgress } = useScroll({ container: containerRef });
+  const progressBar = useSpring(scrollYProgress, { stiffness: 140, damping: 30, restDelta: 0.001 });
+
+  const { scrollYProgress: heroProgress } = useScroll({
+    container: containerRef,
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const heroY = useTransform(heroProgress, [0, 1], [0, reduceMotion ? 0 : 140]);
+  const heroOpacity = useTransform(heroProgress, [0, 0.7], [1, 0]);
 
   // Scroll detection
   useEffect(() => {
@@ -298,7 +385,9 @@ export default function V2Index() {
   const navItems = ['home', 'experience', 'projects', 'contact'];
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="v2-container" ref={containerRef}>
+      <motion.div className="scroll-progress" style={{ scaleX: progressBar }} />
 
       {/* ── Navigation ── */}
       <nav className={`v2-nav ${scrolled ? 'scrolled' : ''}`}>
@@ -322,11 +411,11 @@ export default function V2Index() {
       {/* ════════════════════════════════════════════════
           HERO
       ════════════════════════════════════════════════ */}
-      <section id="home" className="v2-section" style={{ padding: 0 }}>
+      <section id="home" className="v2-section" style={{ padding: 0 }} ref={heroRef}>
         <div className="geo-grid" />
         <div className="hero-glow" />
         <div style={{ padding: '0 56px', display: 'flex', alignItems: 'center', minHeight: '100vh', position: 'relative' }}>
-          <div className="hero-inner">
+          <motion.div className="hero-inner" style={{ y: heroY, opacity: heroOpacity }}>
             <motion.div
               variants={stagger}
               initial="hidden"
@@ -394,10 +483,10 @@ export default function V2Index() {
                 </motion.button>
               </motion.div>
             </motion.div>
-          </div>
+          </motion.div>
 
           {/* Geometric hex wireframe */}
-          <GeoHex />
+          <GeoHex progress={heroProgress} />
 
           {/* Scroll indicator */}
           <div className="scroll-indicator">
@@ -412,10 +501,7 @@ export default function V2Index() {
       ════════════════════════════════════════════════ */}
       <section id="experience" className="v2-section">
         <div className="section-inner">
-          <RevealSection>
-            <motion.div className="section-label" variants={fadeUp}>Experience</motion.div>
-            <motion.h2 className="section-title" variants={fadeUp}>Where I've Built</motion.h2>
-          </RevealSection>
+          <SectionHeading index="01" label="Experience" title="Where I've Built" />
 
           <div className="exp-layout">
             {/* Left: Bio + Skills */}
@@ -443,12 +529,7 @@ export default function V2Index() {
             </RevealSection>
 
             {/* Right: Timeline */}
-            <div className="timeline">
-              <div className="timeline-rail" />
-              {EXPERIENCE.map((entry, i) => (
-                <TimelineEntry key={i} entry={entry} index={i} />
-              ))}
-            </div>
+            <Timeline containerRef={containerRef} />
           </div>
         </div>
       </section>
@@ -458,10 +539,7 @@ export default function V2Index() {
       ════════════════════════════════════════════════ */}
       <section id="projects" className="v2-section">
         <div className="section-inner">
-          <RevealSection>
-            <motion.div className="section-label" variants={fadeUp}>Projects</motion.div>
-            <motion.h2 className="section-title" variants={fadeUp}>Things I've Shipped</motion.h2>
-          </RevealSection>
+          <SectionHeading index="02" label="Projects" title="Things I've Shipped" />
 
           {/* Featured */}
           <motion.div
@@ -479,7 +557,7 @@ export default function V2Index() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="project-card"
-                variants={fadeUp}
+                variants={cardRise}
                 whileHover={{ y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               >
@@ -511,7 +589,7 @@ export default function V2Index() {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="project-card"
-                    variants={fadeUp}
+                    variants={cardRise}
                     whileHover={{ y: -6 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 25 }}
                   >
@@ -537,10 +615,7 @@ export default function V2Index() {
       ════════════════════════════════════════════════ */}
       <section id="contact" className="v2-section">
         <div className="section-inner">
-          <RevealSection>
-            <motion.div className="section-label" variants={fadeUp}>Contact</motion.div>
-            <motion.h2 className="section-title" variants={fadeUp}>Let's Talk</motion.h2>
-          </RevealSection>
+          <SectionHeading index="03" label="Contact" title="Let's Talk" />
 
           <div className="contact-layout">
             {/* Left: Info */}
@@ -599,5 +674,6 @@ export default function V2Index() {
         </div>
       </footer>
     </div>
+    </MotionConfig>
   );
 }
