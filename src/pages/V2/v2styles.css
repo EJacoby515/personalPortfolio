@@ -928,6 +928,8 @@ body, html {
 
 @media (max-width: 600px) {
   .hero-name { letter-spacing: -0.04em; }
-  .nav-links { gap: 1.25rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links li:first-child { display: none; } /* logo already scrolls home */
+  .nav-links button { letter-spacing: 0.08em; }
   .projects-grid { grid-template-columns: 1fr; }
 }
