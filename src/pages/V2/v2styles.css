@@ -1,6 +1,6 @@
 /* ─────────────────────────────────────────────────────────────
    Eric Jacobowitz Portfolio — Geometric Mansion Design System
-   Palette: Deep Charcoal × Sage Green × Warm Gold
+   Palette: Deep Charcoal × Sage Green × Ember Orange
    ───────────────────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
 
@@ -13,8 +13,9 @@
   --sage-light:  #a8c9ac;
   --sage-dim:    #3a5c3e;
   --sage-glow:   rgba(122, 158, 126, 0.12);
-  --gold:        #c4a267;
-  --gold-dim:    rgba(196, 162, 103, 0.18);
+  --orange:      #ff7a2f;
+  --orange-light: #ffa15e;
+  --orange-dim:  rgba(255, 122, 47, 0.18);
   --text:        #dde8dd;
   --text-2:      #7a927a;
   --text-3:      #3d523d;
@@ -40,7 +41,23 @@ body, html {
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--sage-dim); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: var(--sage); }
+::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+
+::selection { background: var(--orange); color: var(--bg); }
+
+/* ── Scroll progress ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--orange), var(--orange-light));
+  box-shadow: 0 0 12px var(--orange);
+  transform-origin: 0 50%;
+  z-index: 200;
+  pointer-events: none;
+}
 
 /* ── Container ── */
 .v2-container {
@@ -60,6 +77,16 @@ body, html {
     linear-gradient(rgba(122, 158, 126, 0.035) 1px, transparent 1px),
     linear-gradient(90deg, rgba(122, 158, 126, 0.035) 1px, transparent 1px);
   background-size: 64px 64px;
+  pointer-events: none;
+}
+
+/* Warm ember glow behind the hero */
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 45% at 78% 50%, rgba(255, 122, 47, 0.10), transparent 70%),
+    radial-gradient(ellipse 35% 30% at 8% 95%, rgba(255, 122, 47, 0.05), transparent 70%);
   pointer-events: none;
 }
 
@@ -97,7 +124,7 @@ body, html {
   gap: 2px;
 }
 
-.nav-logo-accent { color: var(--sage); }
+.nav-logo-accent { color: var(--orange); }
 
 .nav-links {
   display: flex;
@@ -128,14 +155,12 @@ body, html {
   left: 0;
   width: 0;
   height: 1px;
-  background: var(--sage);
+  background: var(--orange);
   transition: width 0.25s ease;
 }
 
-.nav-links button:hover,
-.nav-links button.nav-active {
-  color: var(--sage);
-}
+.nav-links button:hover { color: var(--sage); }
+.nav-links button.nav-active { color: var(--text); }
 
 .nav-links button:hover::after,
 .nav-links button.nav-active::after {
@@ -165,13 +190,20 @@ body, html {
   margin-bottom: 1rem;
 }
 
-.section-label::before {
-  content: '';
+.section-index {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--orange);
+}
+
+.section-label-line {
   display: block;
   width: 2.5rem;
   height: 1px;
-  background: var(--sage);
+  background: var(--orange);
   flex-shrink: 0;
+  transform-origin: left center;
 }
 
 .section-title {
@@ -183,6 +215,17 @@ body, html {
   line-height: 1.1;
   margin-bottom: 3.5rem;
 }
+
+/* Masked line reveal: the inner span slides up from behind this edge */
+.reveal-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+
+.reveal-mask > span { display: inline-block; }
+
+.title-dot { color: var(--orange); }
 
 /* ── Hero ── */
 #home {
@@ -215,7 +258,7 @@ body, html {
 .hero-eyebrow-line {
   width: 3.5rem;
   height: 1px;
-  background: var(--sage);
+  background: var(--orange);
 }
 
 .hero-name {
@@ -240,7 +283,7 @@ body, html {
 }
 
 .hero-title-highlight {
-  color: var(--gold);
+  color: var(--orange);
   font-weight: 500;
 }
 
@@ -263,7 +306,8 @@ body, html {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--sage-dim);
+  background: var(--orange);
+  opacity: 0.7;
 }
 
 .hero-cta {
@@ -274,7 +318,7 @@ body, html {
 
 /* Angular clip-path buttons — geometric mansion detail */
 .btn-primary {
-  background: var(--sage);
+  background: var(--orange);
   color: var(--bg);
   border: none;
   padding: 0.875rem 2.25rem;
@@ -288,7 +332,7 @@ body, html {
   clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
 
-.btn-primary:hover { background: var(--sage-light); }
+.btn-primary:hover { background: var(--orange-light); }
 
 .btn-ghost {
   background: transparent;
@@ -306,16 +350,16 @@ body, html {
 }
 
 .btn-ghost:hover {
-  border-color: var(--sage-dim);
-  color: var(--sage);
+  border-color: var(--orange);
+  color: var(--orange);
 }
 
 /* ── Geometric SVG accent ── */
+/* Centered with calc rather than translate so Framer can own `transform` */
 .hero-geo {
   position: absolute;
   right: -80px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: calc(50% - 260px);
   width: 520px;
   height: 520px;
   opacity: 0.06;
@@ -336,7 +380,7 @@ body, html {
 .scroll-indicator-line {
   width: 1px;
   height: 3.5rem;
-  background: linear-gradient(to bottom, var(--sage), transparent);
+  background: linear-gradient(to bottom, var(--orange), transparent);
   animation: scrollLine 2.5s ease-in-out infinite;
 }
 
@@ -416,6 +460,12 @@ body, html {
   padding: 0.2rem 0.65rem;
   border-radius: 1px;
   letter-spacing: 0.02em;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.skill-tag:hover {
+  border-color: var(--orange-dim);
+  color: var(--orange-light);
 }
 
 /* ── Timeline ── */
@@ -431,6 +481,18 @@ body, html {
   bottom: 0;
   width: 1px;
   background: linear-gradient(to bottom, transparent, var(--sage-dim) 8%, var(--sage-dim) 92%, transparent);
+}
+
+/* Orange fill that tracks scroll progress through the timeline */
+.timeline-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--orange-light), var(--orange));
+  box-shadow: 0 0 8px var(--orange);
+  transform-origin: top center;
 }
 
 .timeline-entry {
@@ -455,8 +517,8 @@ body, html {
 }
 
 .timeline-dot.active {
-  background: var(--gold);
-  box-shadow: 0 0 0 1px var(--gold-dim), 0 0 10px var(--gold);
+  background: var(--orange);
+  box-shadow: 0 0 0 1px var(--orange-dim), 0 0 10px var(--orange);
   border-color: var(--bg);
 }
 
@@ -535,12 +597,12 @@ body, html {
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, var(--sage), transparent 60%);
+  background: linear-gradient(90deg, var(--orange), transparent 60%);
   opacity: 0;
   transition: opacity 0.3s;
 }
 
-.project-card:hover { border-color: var(--sage-dim); }
+.project-card:hover { border-color: var(--orange-dim); }
 .project-card:hover::after { opacity: 1; }
 
 .project-tag {
@@ -584,7 +646,7 @@ body, html {
   transition: color 0.2s;
 }
 
-.project-card:hover .project-link-text { color: var(--sage); }
+.project-card:hover .project-link-text { color: var(--orange); }
 
 .project-lang-badge {
   font-size: 0.65rem;
@@ -676,14 +738,14 @@ body, html {
 }
 
 .chatbot-status-dot--thinking {
-  background: var(--gold);
-  box-shadow: 0 0 8px var(--gold);
+  background: var(--orange);
+  box-shadow: 0 0 8px var(--orange);
   animation: breathe-fast 0.8s ease-in-out infinite;
 }
 
 @keyframes breathe-fast {
-  0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--gold); }
-  50%       { opacity: 0.4; box-shadow: 0 0 3px var(--gold); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--orange); }
+  50%       { opacity: 0.4; box-shadow: 0 0 3px var(--orange); }
 }
 
 .chatbot-head-title {
@@ -722,8 +784,8 @@ body, html {
 }
 
 .chatbot-prompt-chip:hover {
-  border-color: var(--sage-dim);
-  color: var(--sage);
+  border-color: var(--orange-dim);
+  color: var(--orange);
 }
 
 .chatbot-messages {
@@ -750,6 +812,7 @@ body, html {
   background: var(--surface-2);
   border: 1px solid var(--border-2);
   color: var(--text);
+  border-right: 2px solid var(--orange);
   align-self: flex-end;
   border-radius: 1px;
 }
@@ -810,7 +873,7 @@ body, html {
 .chatbot-input::placeholder { color: var(--text-3); }
 
 .chatbot-send-btn {
-  background: var(--sage);
+  background: var(--orange);
   border: none;
   padding: 0 1.5rem;
   color: var(--bg);
@@ -824,7 +887,7 @@ body, html {
   flex-shrink: 0;
 }
 
-.chatbot-send-btn:hover { background: var(--sage-light); }
+.chatbot-send-btn:hover { background: var(--orange-light); }
 .chatbot-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── Footer ── */
@@ -849,7 +912,7 @@ body, html {
   transition: color 0.2s;
 }
 
-.footer-links a:hover { color: var(--sage); }
+.footer-links a:hover { color: var(--orange); }
 
 /* ── Responsive ── */
 @media (max-width: 900px) {
@@ -858,6 +921,7 @@ body, html {
   .exp-layout { grid-template-columns: 1fr; gap: 3rem; }
   .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
   .hero-geo { display: none; }
+  .hero-glow { background: radial-gradient(ellipse 80% 40% at 70% 30%, rgba(255, 122, 47, 0.08), transparent 70%); }
   .scroll-indicator { left: 24px; }
   .v2-footer { padding: 2rem 24px; flex-direction: column; gap: 1rem; text-align: center; }
 }

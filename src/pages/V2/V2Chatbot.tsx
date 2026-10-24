@@ -55,11 +55,14 @@ export default function V2Chatbot() {
   const [loading, setLoading] = useState(false);
   const [showPrompts, setShowPrompts] = useState(true);
   const [modelLabel, setModelLabel] = useState(DEFAULT_MODEL_LABEL);
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Scroll only the message list. scrollIntoView would also scroll the page
+  // container, which yanked visitors down to the chat on first load.
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = messagesRef.current;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
   }, [messages, loading]);
 
   const send = async (text: string) => {
@@ -173,7 +176,7 @@ export default function V2Chatbot() {
       </AnimatePresence>
 
       {/* Messages */}
-      <div className="chatbot-messages">
+      <div className="chatbot-messages" ref={messagesRef}>
         <AnimatePresence initial={false}>
           {messages.map((m, i) => (
             <motion.div
@@ -200,7 +203,6 @@ export default function V2Chatbot() {
             </motion.div>
           )}
         </AnimatePresence>
-        <div ref={bottomRef} />
       </div>
 
       {/* Input */}
